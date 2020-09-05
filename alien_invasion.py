@@ -79,6 +79,7 @@ class AlienInvasion:
 			elif event.type == pygame.MOUSEBUTTONDOWN:
 				mouse_pos = pygame.mouse.get_pos()
 				self.check_play_button(mouse_pos)
+				self.check_med_button(mouse_pos)
 
 	def check_play_button(self,mouse_pos):
 		'''start a new game when player click Play'''
@@ -106,9 +107,31 @@ class AlienInvasion:
 			self.sb.prep_level()
 			self.sb.prep_ships()
 
-		elif medium_clicked and not self.stats.game_active:
+		#hide the mouse cursor
+		pygame.mouse.set_visible(False)
+		
+	def check_med_button(self,mouse_pos):
+		medium_clicked = self.med_button.rect.collidepoint(mouse_pos)
+
+		if medium_clicked and not self.stats.game_active:
 			self.game_setting.increase_speed()
 			self.stats.game_active = True
+
+			self.stats.reset_stats()
+			self.sb.prep_score()
+
+			#remove any remaining aliens and bullets
+			self.aliens.empty()
+			self.bullets.empty()
+
+			#create new fleet
+			self.create_fleet()
+			self.ship.center_ship()
+
+			#re-set score
+			self.sb.prep_score()
+			self.sb.prep_level()
+			self.sb.prep_ships()
 
 		#hide the mouse cursor
 		pygame.mouse.set_visible(False)
